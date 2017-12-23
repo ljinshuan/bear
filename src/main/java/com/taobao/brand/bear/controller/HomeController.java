@@ -13,9 +13,11 @@ import javax.annotation.Resource;
 
 @RestController("/")
 @Slf4j
-@Configuration
 public class HomeController {
 
+    public HomeController(){
+        log.info("home");
+    }
     @Resource
     private HelloService helloServie;
 

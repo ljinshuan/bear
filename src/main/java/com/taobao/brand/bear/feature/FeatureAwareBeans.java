@@ -60,18 +60,12 @@ public class FeatureAwareBeans {
             @Override
             public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
 
-                if (StringUtils.equals(beanName, "dogService")) {
-                    log.info("dogService beforeInit at.{}", System.currentTimeMillis());
-                }
                 return bean;
             }
 
             @Override
             public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
 
-                if (StringUtils.equals(beanName, "dogService")) {
-                    log.info("dogService afterInit at.{}", System.currentTimeMillis());
-                }
                 return bean;
             }
         };

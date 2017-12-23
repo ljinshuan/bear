@@ -20,6 +20,11 @@ public class DogService implements BeanNameAware {
     @Resource
     private UserProperties userProperties;
 
+
+    public DogService(){
+
+        log.info("construct");
+    }
     @PostConstruct
     public void init() {
         log.info(userProperties.toString());
