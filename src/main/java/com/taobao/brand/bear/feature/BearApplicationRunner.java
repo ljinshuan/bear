@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class BearApplicationRunner implements ApplicationRunner {
     @Override
-    public void run(ApplicationArguments applicationArguments) throws Exception {
+    public void run(ApplicationArguments applicationArguments) {
 
         log.info(StringHelper.toJsonString(applicationArguments));
     }
