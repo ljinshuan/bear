@@ -46,7 +46,7 @@ public class FeatureAwareBeans {
     @Bean
     public BeanFactoryAware beanFactoryAware() {
         return beanFactory -> {
-            log.info(beanFactory.toString());
+
         };
     }
 

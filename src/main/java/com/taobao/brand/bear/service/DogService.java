@@ -1,5 +1,6 @@
 package com.taobao.brand.bear.service;
 
+import com.google.common.collect.Lists;
 import com.taobao.brand.bear.domain.Dog;
 import com.taobao.brand.bear.properties.UserProperties;
 import lombok.extern.slf4j.Slf4j;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * @author jinshuan.li 2017/12/22 08:14
@@ -20,15 +22,17 @@ public class DogService implements BeanNameAware {
     @Resource
     private UserProperties userProperties;
 
+    private List<Dog> allDogs = Lists.newArrayList();
 
-    public DogService(){
+    public DogService() {
 
-        log.info("construct");
+        this.allDogs.add(Dog.builder().age(26).name("Ljinshuan").build());
+        this.allDogs.add(Dog.builder().age(24).name("Louise").build());
     }
+
     @PostConstruct
     public void init() {
-        log.info(userProperties.toString());
-        //ThreadUtils.sleep(10000L);
+
     }
 
     /**
@@ -52,6 +56,15 @@ public class DogService implements BeanNameAware {
     public void setBeanName(String name) {
         // 实现了BeanNameAware 接口 如果被初始化 会调用setBeanName方法
         //log.info(name);
+    }
+
+    /**
+     * 获取所有的dog
+     * @return
+     */
+    public List<Dog> getAllDogs() {
+
+        return this.allDogs;
     }
 
 }

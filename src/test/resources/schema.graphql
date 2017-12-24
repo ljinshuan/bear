@@ -1,0 +1,15 @@
+
+type Dog{
+    name:String!
+    age:Int!
+}
+
+type Query{
+    allDogs:[Dog]
+    dog:Dog
+    dog2(name:String!):Dog
+}
+
+schema{
+    query:Query
+}
