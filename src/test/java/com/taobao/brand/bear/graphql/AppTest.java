@@ -3,14 +3,18 @@ package com.taobao.brand.bear.graphql;
 import com.taobao.brand.bear.domain.Dog;
 import com.taobao.brand.bear.service.DogService;
 import com.taobao.brand.bear.utils.StringHelper;
+import graphql.ExecutionInput;
 import graphql.ExecutionResult;
 import graphql.GraphQL;
 import graphql.schema.*;
 import graphql.schema.idl.*;
 import lombok.extern.slf4j.Slf4j;
+import org.assertj.core.util.Maps;
 import org.junit.Test;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.UnaryOperator;
 
 import static graphql.schema.idl.RuntimeWiring.newRuntimeWiring;
@@ -90,7 +94,11 @@ public class AppTest {
                 environment -> dogService.getDog("ljinshuan")).dataFetcher("dog2", environment -> {
                 String name = environment.getArgument("name");
                 return dogService.getDog(name);
-            })).build();
+            }).dataFetcher("map", environment -> {
+                Map<String, Object> data = new HashMap<>();
+                data.put("mapKey", "mapValue");
+                return data;
+            })).scalar(new MapScalarType()).build();
 
         SchemaGenerator schemaGenerator = new SchemaGenerator();
 
@@ -100,7 +108,15 @@ public class AppTest {
 
         GraphQL graphQL = GraphQL.newGraphQL(graphQLSchema).build();
 
-        ExecutionResult execute = graphQL.execute("{dog2(name:\"lll\"){name,age}}");
+        //String query = "{dog2(name:\"lll\"){name,age}}";
+        //String query="{map}";
+
+        String query = "query ($name:String!){dog2(name:$name){name,age}}";
+        Map<String, Object> variables = Maps.newHashMap("name", "Louise");
+        ExecutionInput executionInput = ExecutionInput.newExecutionInput().context(null).query(query).variables(
+            variables)
+            .build();
+        ExecutionResult execute = graphQL.execute(executionInput);
 
         String s = StringHelper.toJsonString(execute);
 
