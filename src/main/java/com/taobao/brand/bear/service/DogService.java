@@ -3,6 +3,7 @@ package com.taobao.brand.bear.service;
 import com.google.common.collect.Lists;
 import com.taobao.brand.bear.domain.Dog;
 import com.taobao.brand.bear.properties.UserProperties;
+import com.taobao.brand.bear.utils.ThreadUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.cache.annotation.Cacheable;
@@ -47,7 +48,7 @@ public class DogService implements BeanNameAware {
 
     @Cacheable("ddd")
     public Dog getDog(String name) {
-
+        ThreadUtils.sleep(100L);
         log.info("get from db");
         return createDog(name, 20);
     }
@@ -60,6 +61,7 @@ public class DogService implements BeanNameAware {
 
     /**
      * 获取所有的dog
+     *
      * @return
      */
     public List<Dog> getAllDogs() {
