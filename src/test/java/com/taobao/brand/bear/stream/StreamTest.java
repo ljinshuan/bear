@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.springframework.web.context.request.NativeWebRequest;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
@@ -17,13 +18,14 @@ import java.util.stream.Stream;
  */
 public class StreamTest {
 
-    private List<String> datas=Lists.newArrayList("ljinshuan","aoguilin");
-    @Test
-    public void flatMap(){
+    private List<String> datas = Lists.newArrayList("ljinshuan", "aoguilin");
 
-       List<List<Integer>> datas=Lists.newArrayList();
-       datas.add(Lists.newArrayList(1,2));
-       datas.add(Lists.newArrayList(3,4));
+    @Test
+    public void flatMap() {
+
+        List<List<Integer>> datas = Lists.newArrayList();
+        datas.add(Lists.newArrayList(1, 2));
+        datas.add(Lists.newArrayList(3, 4));
 
         List<Integer> collect = datas.stream().flatMap(items -> items.stream()).collect(Collectors.toList());
 
@@ -32,13 +34,13 @@ public class StreamTest {
     }
 
     @Test
-    public void test(){
-        datas.stream().peek(s -> System.out.println(s)).forEach(s->System.out.println(s));
+    public void test() {
+        datas.stream().peek(s -> System.out.println(s)).forEach(s -> System.out.println(s));
 
     }
 
     @Test
-    public void test2(){
+    public void test2() {
 
         Optional<String> reduce = datas.stream().reduce((s, s2) -> s + s2);
 
@@ -48,8 +50,11 @@ public class StreamTest {
     }
 
     @Test
-    public void test3(){
+    public void test3() {
 
+        Map<String, String> collect = datas.stream().collect(Collectors.toMap(s -> s, s -> s));
 
+        collect.put("xxx", null);
+        System.out.println(collect);
     }
 }
