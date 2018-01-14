@@ -1,16 +1,15 @@
 package com.taobao.brand.bear.stream;
 
-import com.sun.activation.registries.LogSupport;
 import com.taobao.brand.bear.domain.Dog;
 import com.taobao.brand.bear.service.DogService;
 import com.taobao.brand.bear.utils.ThreadUtils;
-import io.reactivex.*;
+import io.reactivex.Observable;
+import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
-import org.reactivestreams.Publisher;
 
-import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
@@ -37,7 +36,7 @@ public class RxJavaObservableTest {
             emitter.onComplete();
         });
 
-        // 此处会阻塞
+
 
         System.out.println("end");
     }
