@@ -57,4 +57,10 @@ public class StreamTest {
         collect.put("xxx", null);
         System.out.println(collect);
     }
+
+    @Test
+    public void test4() {
+
+        datas.stream().map(s -> s.length()).filter(d->d>0).collect(Collectors.toList());
+    }
 }

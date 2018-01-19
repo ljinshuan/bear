@@ -18,6 +18,6 @@ public class GeoHashTest extends BearApplicationTests{
         double lng=99.9920272319;
         GeoHash geoHash = GeoHash.withCharacterPrecision(latitude, lng, 6);
 
-        log.info(geoHash.toString());
+        log.info(geoHash.toBase32());
     }
 }
