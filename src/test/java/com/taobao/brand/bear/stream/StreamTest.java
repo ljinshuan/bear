@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -61,6 +62,15 @@ public class StreamTest {
     @Test
     public void test4() {
 
-        datas.stream().map(s -> s.length()).filter(d->d>0).collect(Collectors.toList());
+        datas.stream().map(s -> s.length()).filter(d -> d > 0).collect(Collectors.toList());
+    }
+
+    @Test
+    public void test5() {
+
+        datas.stream().map(s -> {
+
+            throw new IllegalStateException("hahaha");
+        }).forEach(System.out::println);
     }
 }
