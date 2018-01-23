@@ -200,4 +200,51 @@ public class ThreadPoolTest {
 
         countDownLatch.await();
     }
+
+    @Test
+    public void test4() throws InterruptedException {
+
+        ExecutorService executorService = createPools(1, 2, 1, 1, "threadName");
+        Future<Integer> submit = executorService.submit(() -> {
+
+            try {
+                while (true) {
+                    log.info("run in thread  A {}", System.currentTimeMillis());
+                    log.info("interupt thread . {} ", Thread.currentThread().isInterrupted());
+                    ThreadUtils.sleep(2000);
+                }
+            } catch (Exception e) {
+
+                log.error(e.getMessage(), e);
+            }
+            return 1;
+
+        });
+
+        ThreadUtils.sleep(5000);
+
+        boolean cancel = submit.cancel(true);
+
+        log.info(submit.toString());
+        log.info(String.valueOf(cancel));
+
+     /*   submit = executorService.submit(() -> {
+
+            while (true) {
+                log.info("run in thread  B {}", System.currentTimeMillis());
+                ThreadUtils.sleep(2000);
+            }
+
+        });
+        executorService.submit(() -> {
+
+            while (true) {
+                log.info("run in thread  C {}", System.currentTimeMillis());
+                ThreadUtils.sleep(2000);
+            }
+
+        });*/
+
+        countDownLatch.await();
+    }
 }
