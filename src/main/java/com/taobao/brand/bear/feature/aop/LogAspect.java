@@ -5,7 +5,6 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Repository;
-import sun.jvm.hotspot.HelloWorld;
 
 /**
  * @author jinshuan.li 2017/12/23 12:30

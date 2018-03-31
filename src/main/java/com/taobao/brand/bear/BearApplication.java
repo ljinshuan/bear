@@ -1,6 +1,5 @@
 package com.taobao.brand.bear;
 
-import com.sun.org.apache.bcel.internal.generic.NEW;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
@@ -16,5 +15,7 @@ public class BearApplication {
 
     public static void main(String[] args) {
         ConfigurableApplicationContext applicationContext = SpringApplication.run(BearApplication.class, args);
+
+
     }
 }

@@ -34,6 +34,7 @@ public class DogService implements BeanNameAware {
     @PostConstruct
     public void init() {
 
+        System.out.println("dd");
     }
 
     /**

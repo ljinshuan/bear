@@ -1,9 +1,11 @@
 package com.taobao.brand.bear.threadpool;
 
+import com.google.common.collect.Maps;
 import com.taobao.brand.bear.utils.ThreadUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 
+import java.util.Map;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -244,6 +246,39 @@ public class ThreadPoolTest {
             }
 
         });*/
+
+        countDownLatch.await();
+    }
+
+    @Test
+    public void testThreadLocal() throws ExecutionException, InterruptedException {
+
+        ThreadLocal<Map<String, Object>> threadLocal = new ThreadLocal<>();
+
+        Map<String, Object> dataMain = Maps.newHashMap();
+        dataMain.put("name", Thread.currentThread().getName());
+        threadLocal.set(dataMain);
+
+        log.info("dataInMain : {}", dataMain);
+
+        ExecutorService executorService = createPools(50, 50, 50, Integer.MAX_VALUE, "threadName");
+
+        Future<Map<String, Object>> submit = executorService.submit(() -> {
+
+            Map<String, Object> data = Maps.newHashMap();
+            data.putAll(dataMain);
+            threadLocal.set(data);
+
+            Map<String, Object> dataInThread = threadLocal.get();
+            dataInThread.put("name", Thread.currentThread().getName());
+            log.info("dataInThread {}", dataInThread);
+
+            return dataInThread;
+        });
+
+        Map<String, Object> dataFromThread = submit.get();
+        log.info("dataInMain : {}", dataMain);
+        log.info("dataFromThread : {}", dataFromThread);
 
         countDownLatch.await();
     }
