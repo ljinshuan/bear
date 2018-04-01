@@ -1,16 +1,19 @@
 package com.taobao.brand.bear.stream;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.taobao.brand.bear.domain.Dog;
 import io.reactivex.*;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.*;
 import io.reactivex.schedulers.Timed;
+import javafx.collections.ObservableList;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
@@ -288,6 +291,8 @@ public class RxJavaOperatorTest {
 
     @Test
     public void test27() {
+
+
 
     }
 

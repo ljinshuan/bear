@@ -2,8 +2,10 @@ package com.taobao.brand.bear.stream;
 
 import com.taobao.brand.bear.utils.ThreadUtils;
 import io.reactivex.Flowable;
+import io.reactivex.Maybe;
 import io.reactivex.Observable;
 import io.reactivex.Single;
+import io.reactivex.internal.operators.flowable.FlowableSingle;
 import io.reactivex.schedulers.Schedulers;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
@@ -21,7 +23,6 @@ public class RxJavaTest {
     public void testJust() {
 
         Observable.just(1, 2, 3).subscribe(integer -> System.out.println(integer));
-
     }
 
     @Test
@@ -71,7 +72,7 @@ public class RxJavaTest {
             .map(s -> fs.subscribe())
             .sequential()
             .observeOn(Schedulers.trampoline()).blockingSubscribe();
-            //.subscribe();
+        //.subscribe();
 
         Thread.sleep(1000000);
     }
