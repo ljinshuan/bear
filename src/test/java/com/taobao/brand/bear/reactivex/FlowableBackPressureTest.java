@@ -3,12 +3,11 @@ package com.taobao.brand.bear.reactivex;
 import com.google.common.collect.Lists;
 import com.taobao.brand.bear.domain.Dog;
 import com.taobao.brand.bear.utils.ThreadUtils;
+import io.reactivex.BackpressureOverflowStrategy;
+import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
-import io.reactivex.FlowableSubscriber;
-import io.reactivex.Scheduler;
-import io.reactivex.functions.Action;
+import io.reactivex.FlowableOnSubscribe;
 import io.reactivex.functions.Consumer;
-import io.reactivex.internal.operators.flowable.FlowableOnBackpressureDrop;
 import io.reactivex.schedulers.Schedulers;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Before;
@@ -58,12 +57,8 @@ public class FlowableBackPressureTest {
     public void testPress() throws InterruptedException {
 
         // 支持背压
-        Flowable.interval(5L, TimeUnit.MILLISECONDS).onBackpressureBuffer(1024, new Action() {
-            @Override
-            public void run() throws Exception {
-                System.out.println("over flow");
-            }
-        })
+        Flowable.interval(5L, TimeUnit.MILLISECONDS).onBackpressureBuffer(1024, () -> System.out.println("over flow"),
+            BackpressureOverflowStrategy.DROP_LATEST)
             .observeOn(Schedulers.newThread()).subscribe(
             new Subscriber<Long>() {
 
@@ -79,7 +74,7 @@ public class FlowableBackPressureTest {
                 public void onNext(Long aLong) {
 
                     log.info(aLong.toString());
-                    ThreadUtils.sleep(10);
+                    ThreadUtils.sleep(100);
                     subscription.request(1);
                 }
 
@@ -97,6 +92,64 @@ public class FlowableBackPressureTest {
             });
 
         countDownLatch.await();
+    }
+
+    Subscriber<Long> pressSub = new Subscriber<Long>() {
+
+        private Subscription subscription;
+
+        @Override
+        public void onSubscribe(Subscription s) {
+            subscription = s;
+            s.request(1);
+        }
+
+        @Override
+        public void onNext(Long aLong) {
+
+            log.info(aLong.toString());
+            ThreadUtils.sleep(1000);
+            subscription.request(1);
+        }
+
+        @Override
+        public void onError(Throwable t) {
+
+            t.printStackTrace();
+        }
+
+        @Override
+        public void onComplete() {
+
+            System.out.println("end");
+        }
+    };
+
+    @Test
+    public void testPress2() throws InterruptedException {
+
+        Flowable.interval(5, TimeUnit.MILLISECONDS)
+            .observeOn(Schedulers.newThread()).subscribe(pressSub);
+
+        System.out.println("subscribe");
+        countDownLatch.await();
+
+    }
+
+    @Test
+    public void testPress3() throws InterruptedException {
+
+        Flowable.create((FlowableOnSubscribe<Long>)emitter -> {
+
+            while (true) {
+
+                emitter.onNext(System.currentTimeMillis());
+            }
+        }, BackpressureStrategy.ERROR).observeOn(Schedulers.newThread()).subscribe(pressSub);
+
+        System.out.println("subscribe");
+        countDownLatch.await();
+
     }
 
 }
