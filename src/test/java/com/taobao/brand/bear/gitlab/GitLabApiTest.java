@@ -103,7 +103,7 @@ public class GitLabApiTest {
             PullCommand pullCommand = localGit.pull();
 
             pullCommand.setRemote("origin").setCredentialsProvider(
-                new UsernamePasswordCredentialsProvider(username, username));
+                new UsernamePasswordCredentialsProvider(username, username)).setTimeout(30);
 
             pullResult = pullCommand.call();
             String header = localGit.getRepository().getBranch();
@@ -147,7 +147,7 @@ public class GitLabApiTest {
         String localPath = getLocalPath(groupName, projectName, branch);
 
         CloneCommand cloneCommand = Git.cloneRepository().setURI(remoteURL).setBranch(branch).setDirectory(
-            new File(localPath));
+            new File(localPath)).setTimeout(30);
         Git git = null;
         cloneCommand.setCredentialsProvider(new UsernamePasswordCredentialsProvider(username, username));
 
