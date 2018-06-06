@@ -14,11 +14,12 @@ import java.io.Serializable;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Dog implements Serializable {
+public class Dog2 implements Serializable {
 
     private String name;
 
     private Integer age;
 
-}
+    private Integer status;
 
+}
