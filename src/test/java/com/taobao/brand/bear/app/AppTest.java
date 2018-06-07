@@ -34,14 +34,16 @@ public class AppTest {
     @Test
     public void test() throws InterruptedException {
 
-        Date oldTimeDate = new Date(1527774861000L);
+        Date oldTimeDate = new Date(1528344487000L);
         Long oldTime = oldTimeDate.getTime();
 
-        LocalDate localDate = Instant.ofEpochMilli(oldTime).atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate localDate = Instant.ofEpochMilli(oldTime).atZone(ZoneId.systemDefault()).toLocalDate().with(
+            ChronoField.DAY_OF_WEEK, 1);
 
         LocalDate now = LocalDate.now();
-        LocalDate with = now.with(ChronoField.DAY_OF_WEEK, 1);
+        now = now.with(ChronoField.DAY_OF_WEEK, 1);
 
+        boolean equals = localDate.equals(now);
         long between = ChronoUnit.MONTHS.between(localDate, now);
         if (between == 0) {
             // 同一周
