@@ -1,6 +1,7 @@
 package com.taobao.brand.bear.app;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.taobao.brand.bear.domain.Dog;
@@ -9,6 +10,8 @@ import com.taobao.brand.bear.utils.ThreadUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -95,5 +98,15 @@ public class AppTest {
                 Collectors.toList());
 
         System.out.println(collect);
+    }
+
+    @Test
+    public void test3() {
+
+        String ff = "[\"java.lang.Long\"]";
+
+        JSONArray objects = JSONArray.parseArray(ff);
+
+        System.out.println(objects.toJSONString());
     }
 }
