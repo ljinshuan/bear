@@ -2,11 +2,11 @@
 <Configuration status="WARN">
     <Properties>
         <property name="LOG_FILE">$${env:HOME}/logs/bear_log4j.log</property>
-        <property name="pattern">%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n</property>
+        <property name="pattern">%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %L %msg%n</property>
     </Properties>
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT">
-            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} -  $${env:USER} %msg%n"/>
+            <PatternLayout pattern="${pattern}"/>
         </Console>
         <!--
                 <File name="AppFile" fileName="${LOG_FILE}">
@@ -25,18 +25,19 @@
                 <TimeBasedTriggeringPolicy/>
             </Policies>
         </RollingRandomAccessFile>
-
     </Appenders>
+
+
     <Loggers>
 
         <Root level="error">
             <AppenderRef ref="Console"/>
         </Root>
 
-        <Logger name="com.taobao.brand" level="info" additivity="false">
+        <AsyncLogger name="com.taobao.brand" level="info" additivity="false" includeLocation="true">
             <AppenderRef ref="Console"/>
             <AppenderRef ref="RollingRandomAccessFile"/>
-        </Logger>
+        </AsyncLogger>
 
     </Loggers>
 </Configuration>
