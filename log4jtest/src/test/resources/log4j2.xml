@@ -25,6 +25,10 @@
                 <TimeBasedTriggeringPolicy/>
             </Policies>
         </TacRollingRandomAccessFile>
+
+        <TacThreadLocalAppender name="TacThreadLocalAppender">
+            <PatternLayout pattern="${pattern}"/>
+        </TacThreadLocalAppender>
     </Appenders>
 
 
@@ -35,7 +39,9 @@
         </Root>
 
         <!--AsyncLogger-->
-        <TacAsyncLogger name="com.taobao.brand" level="info" additivity="false" includeLocation="true">
+        <!--TacAsyncLogger-->
+        <TacAsyncLogger name="com.taobao.brand" level="info" additivity="false" includeLocation="true"
+                        syncAppenderName="TacThreadLocalAppender">
             <AppenderRef ref="Console"/>
             <AppenderRef ref="TacRollingRandomAccessFile"/>
         </TacAsyncLogger>
