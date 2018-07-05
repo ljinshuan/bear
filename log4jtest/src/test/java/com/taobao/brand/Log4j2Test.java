@@ -1,5 +1,6 @@
 package com.taobao.brand;
 
+import com.taobao.brand.log4j2ext.ThreadLocals;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +14,8 @@ public class Log4j2Test {
 
     @Test
     public void test() throws InterruptedException {
+
+        ThreadLocals.setMsCode("other");
 
         while (true) {
             logger.info("hahaa {}", System.currentTimeMillis());

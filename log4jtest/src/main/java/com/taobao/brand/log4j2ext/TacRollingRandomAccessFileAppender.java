@@ -85,32 +85,49 @@ public class TacRollingRandomAccessFileAppender extends RollingRandomAccessFileA
 
     private RollingRandomAccessFileAppender getCurrentAppender() {
 
-        String name = this.getName();
+        String msCode = ThreadLocals.getMsCode();
 
-        String msCode = "other";
+        if (StringUtils.isEmpty(msCode)) {
+            return this;
+        }
+        String name = this.getName();
+        
         String suffix = "." + msCode;
         name = name + suffix;
 
         RollingRandomAccessFileAppender currentAppender = tacFileAppenders.get(name);
 
         if (currentAppender == null) {
-            String oldFileName = this.getFileName();
-            String fileName = this.getFileName();
-            fileName = fileName + suffix;
-            String filePattern = this.getFilePattern();
-            filePattern = StringUtils.replace(filePattern, oldFileName, fileName);
-            TriggeringPolicy policy = tacBuilder.getPolicy();
-            Builder builder = RollingRandomAccessFileAppender.newBuilder().withFileName(fileName)
-                .withFilePattern(
-                    filePattern).withName(name).withConfiguration(tacBuilder.getConfiguration()).withPolicy(policy)
-                .withLayout(tacBuilder.getLayout());
-            RollingRandomAccessFileAppender build = builder.build();
 
-            currentAppender = build;
+            currentAppender = copyAndBuild(name, suffix);
 
-            tacFileAppenders.put(name, build);
+            tacFileAppenders.put(name, currentAppender);
         }
         return currentAppender;
+    }
+
+    /**
+     * 复制创建appender
+     *
+     * @param name
+     * @param suffix
+     * @return
+     */
+    private RollingRandomAccessFileAppender copyAndBuild(String name, String suffix) {
+
+        String oldFileName = this.getFileName();
+        String fileName = this.getFileName();
+        fileName = fileName + suffix;
+        String filePattern = this.getFilePattern();
+        filePattern = StringUtils.replace(filePattern, oldFileName, fileName);
+        TriggeringPolicy policy = tacBuilder.getPolicy();
+        Builder builder = RollingRandomAccessFileAppender.newBuilder().withFileName(fileName)
+            .withFilePattern(
+                filePattern).withName(name).withConfiguration(tacBuilder.getConfiguration()).withPolicy(policy)
+            .withLayout(tacBuilder.getLayout());
+        RollingRandomAccessFileAppender build = builder.build();
+
+        return build;
     }
 
     @PluginBuilderFactory
