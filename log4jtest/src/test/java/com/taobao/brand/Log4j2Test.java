@@ -19,5 +19,6 @@ public class Log4j2Test {
 
             Thread.sleep(500L);
         }
+
     }
 }

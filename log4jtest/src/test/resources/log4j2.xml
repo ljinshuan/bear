@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="WARN">
+<Configuration status="DEBUG">
     <Properties>
         <property name="LOG_FILE">$${env:HOME}/logs/bear_log4j.log</property>
         <property name="pattern">%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %L %msg%n</property>
@@ -18,13 +18,13 @@
         -->
 
 
-        <RollingRandomAccessFile name="RollingRandomAccessFile" fileName="${LOG_FILE}"
-                                 filePattern="${LOG_FILE}.%d{yyyy-MM-dd}">
+        <TacRollingRandomAccessFile name="RollingRandomAccessFile" fileName="${LOG_FILE}"
+                                    filePattern="${LOG_FILE}.%d{yyyy-MM-dd}">
             <PatternLayout pattern="${pattern}"/>
             <Policies>
                 <TimeBasedTriggeringPolicy/>
             </Policies>
-        </RollingRandomAccessFile>
+        </TacRollingRandomAccessFile>
     </Appenders>
 
 
@@ -34,10 +34,11 @@
             <AppenderRef ref="Console"/>
         </Root>
 
-        <AsyncLogger name="com.taobao.brand" level="info" additivity="false" includeLocation="true">
+        // AsyncLogger
+        <Logger name="com.taobao.brand" level="info" additivity="false" includeLocation="true">
             <AppenderRef ref="Console"/>
             <AppenderRef ref="RollingRandomAccessFile"/>
-        </AsyncLogger>
+        </Logger>
 
     </Loggers>
 </Configuration>
