@@ -46,8 +46,6 @@ import org.apache.logging.log4j.core.util.Integers;
 /**
  * An appender that writes to random access files and can roll over at intervals.
  */
-@Plugin(name = "RollingRandomAccessFileOld", category = Core.CATEGORY_NAME, elementType = Appender.ELEMENT_TYPE,
-    printObject = true)
 public class RollingRandomAccessFileAppender extends
     AbstractOutputStreamAppender<RollingRandomAccessFileManager> {
 

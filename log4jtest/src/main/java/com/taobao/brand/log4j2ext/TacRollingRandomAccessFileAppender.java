@@ -74,7 +74,7 @@ public class TacRollingRandomAccessFileAppender extends RollingRandomAccessFileA
      */
     @Override
     public void append(LogEvent event) {
-        RollingRandomAccessFileAppender currentAppender = getCurrentAppender();
+        RollingRandomAccessFileAppender currentAppender = getCurrentAppender(event);
         if (currentAppender == this) {
             super.append(event);
         } else {
@@ -83,15 +83,22 @@ public class TacRollingRandomAccessFileAppender extends RollingRandomAccessFileA
 
     }
 
-    private RollingRandomAccessFileAppender getCurrentAppender() {
+    private RollingRandomAccessFileAppender getCurrentAppender(LogEvent event) {
 
         String msCode = ThreadLocals.getMsCode();
+
+        if (StringUtils.isEmpty(msCode)) {
+
+            if (event instanceof TacLogEvent) {
+                msCode = ((TacLogEvent)event).getMsCode();
+            }
+        }
 
         if (StringUtils.isEmpty(msCode)) {
             return this;
         }
         String name = this.getName();
-        
+
         String suffix = "." + msCode;
         name = name + suffix;
 
