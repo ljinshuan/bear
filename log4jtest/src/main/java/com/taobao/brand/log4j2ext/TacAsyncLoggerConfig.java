@@ -1,11 +1,8 @@
 package com.taobao.brand.log4j2ext;
 
 import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.core.Appender;
 import org.apache.logging.log4j.core.Filter;
 import org.apache.logging.log4j.core.LogEvent;
-import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.async.AsyncLoggerConfig;
 import org.apache.logging.log4j.core.async.AsyncLoggerConfigDelegate;
 import org.apache.logging.log4j.core.async.AsyncQueueFullMessageUtil;
@@ -13,7 +10,6 @@ import org.apache.logging.log4j.core.async.EventRoute;
 import org.apache.logging.log4j.core.config.*;
 import org.apache.logging.log4j.core.config.plugins.*;
 import org.apache.logging.log4j.core.impl.Log4jLogEvent;
-import org.apache.logging.log4j.core.impl.MutableLogEvent;
 import org.apache.logging.log4j.core.util.Booleans;
 import org.apache.logging.log4j.message.Message;
 import org.apache.logging.log4j.spi.AbstractLogger;
@@ -30,21 +26,15 @@ public class TacAsyncLoggerConfig extends AsyncLoggerConfig {
 
     private final AsyncLoggerConfigDelegate tacDelegate = new TacAsyncLoggerConfigDisruptor();
 
-    private String syncAppenderName;
-
-    private Appender syncAppender;
-
     private Configuration configuration;
 
     protected TacAsyncLoggerConfig(String name, List<AppenderRef> appenders,
                                    Filter filter, Level level,
                                    boolean additive, Property[] properties,
-                                   Configuration config, boolean includeLocation, String syncAppenderName) {
+                                   Configuration config, boolean includeLocation) {
 
         super(name, appenders, filter, level, additive, properties, config, includeLocation);
         this.configuration = config;
-
-        this.syncAppenderName = syncAppenderName;
 
         tacDelegate.setLogEventFactory(getLogEventFactory());
 
@@ -59,12 +49,6 @@ public class TacAsyncLoggerConfig extends AsyncLoggerConfig {
 
         tacDelegate.start();
 
-        // 解析同步appender
-
-        Appender appender = configuration.getAppender(this.syncAppenderName);
-
-        this.syncAppender = appender;
-
     }
 
     @Override
@@ -72,18 +56,8 @@ public class TacAsyncLoggerConfig extends AsyncLoggerConfig {
 
         populateLazilyInitializedFields(event);
 
-        handleSyncAppender(event);
-
         if (!tacDelegate.tryEnqueue(event, this)) {
             handleQueueFull(event);
-        }
-
-    }
-
-    private void handleSyncAppender(LogEvent event) {
-
-        if (this.syncAppender != null) {
-            syncAppender.append(event);
         }
 
     }
@@ -111,7 +85,6 @@ public class TacAsyncLoggerConfig extends AsyncLoggerConfig {
         @PluginAttribute("level") final String levelName,
         @PluginAttribute("name") final String loggerName,
         @PluginAttribute("includeLocation") final String includeLocation,
-        @PluginAttribute("syncAppenderName") final String syncAppenderName,
         @PluginElement("AppenderRef") final AppenderRef[] refs,
         @PluginElement("Properties") final Property[] properties,
         @PluginConfiguration final Configuration config,
@@ -136,7 +109,7 @@ public class TacAsyncLoggerConfig extends AsyncLoggerConfig {
         final boolean additive = Booleans.parseBoolean(additivity, true);
 
         return new TacAsyncLoggerConfig(name, appenderRefs, filter, level,
-            additive, properties, config, includeLocation(includeLocation), syncAppenderName);
+            additive, properties, config, includeLocation(includeLocation));
     }
 
 }

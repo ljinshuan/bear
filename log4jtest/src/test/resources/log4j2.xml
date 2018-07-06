@@ -40,11 +40,13 @@
 
         <!--AsyncLogger-->
         <!--TacAsyncLogger-->
-        <TacAsyncLogger name="com.taobao.brand" level="info" additivity="false" includeLocation="true"
-                        syncAppenderName="TacThreadLocalAppender">
+        <TacAsyncLogger name="com.taobao.brand" level="info" additivity="true" includeLocation="true">
             <AppenderRef ref="Console"/>
             <AppenderRef ref="TacRollingRandomAccessFile"/>
         </TacAsyncLogger>
 
+        <Logger name="com.taobao" level="info" additivity="false" includeLocation="true">
+            <AppenderRef ref="TacThreadLocalAppender"/>
+        </Logger>
     </Loggers>
 </Configuration>

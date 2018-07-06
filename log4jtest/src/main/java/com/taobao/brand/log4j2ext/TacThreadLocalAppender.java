@@ -2,19 +2,15 @@ package com.taobao.brand.log4j2ext;
 
 import org.apache.logging.log4j.core.*;
 import org.apache.logging.log4j.core.appender.AbstractOutputStreamAppender;
-import org.apache.logging.log4j.core.appender.OutputStreamAppender;
 import org.apache.logging.log4j.core.appender.OutputStreamManager;
-import org.apache.logging.log4j.core.appender.rolling.*;
+import org.apache.logging.log4j.core.appender.rolling.RollingRandomAccessFileManager;
 import org.apache.logging.log4j.core.config.plugins.Plugin;
-import org.apache.logging.log4j.core.config.plugins.PluginBuilderAttribute;
 import org.apache.logging.log4j.core.config.plugins.PluginBuilderFactory;
-import org.apache.logging.log4j.core.config.plugins.PluginElement;
 
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.Serializable;
 import java.nio.charset.Charset;
-import java.util.zip.Deflater;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author jinshuan.li 2018/7/5 22:47
@@ -41,6 +37,12 @@ public class TacThreadLocalAppender extends AbstractOutputStreamAppender {
                                      boolean immediateFlush,
                                      OutputStreamManager manager) {
         super(name, layout, filter, ignoreExceptions, immediateFlush, manager);
+    }
+
+    @Override
+    public boolean stop(long timeout, TimeUnit timeUnit) {
+
+        return true;
     }
 
     public static class Builder<B extends Builder<B>> extends AbstractOutputStreamAppender.Builder<B>
@@ -82,7 +84,6 @@ public class TacThreadLocalAppender extends AbstractOutputStreamAppender {
         if (bytes != null && bytes.length > 0) {
 
             String data = new String(bytes, defaultCharset);
-
         }
     }
 
