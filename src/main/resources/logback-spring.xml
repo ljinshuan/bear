@@ -29,6 +29,14 @@
         <!-- 添加附加的appender,最多只能添加一个 -->
         <appender-ref ref="APPLICATION"/>
     </appender>
+
+    <appender name="tacThreadLocal"
+              class="com.taobao.brand.bear.appender.TacThreadLocalAppender">
+        <encoder>
+            <pattern>${FILE_LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
     <!--
      <appender name="APPLICATION"
               class="ch.qos.logback.core.rolling.RollingFileAppender">
@@ -57,6 +65,7 @@
     <logger name="com.taobao.brand.bear" level="DEBUG" additivity="false">
         <appender-ref ref="tac-user-appender-async"/>
         <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="tacThreadLocal"/>
     </logger>
     <root level="DEBUG">
         <appender-ref ref="tac-user-appender-async"/>

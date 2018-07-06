@@ -18,6 +18,7 @@ public class BearApplication {
     public static void main(String[] args) {
 
         String name = Thread.currentThread().getName();
+
         log.info("hello " + name);
         ConfigurableApplicationContext applicationContext = SpringApplication.run(BearApplication.class, args);
 
