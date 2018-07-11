@@ -3,9 +3,12 @@ package com.taobao.brand.bear.reactivex;
 import com.google.common.collect.Lists;
 import com.taobao.brand.bear.domain.Dog;
 import io.reactivex.Flowable;
+import io.reactivex.Maybe;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.BiFunction;
 import io.reactivex.functions.Consumer;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -71,6 +74,13 @@ public class FlowableTransformTest {
     public void windowTest() {
 
         // TODO: 01/04/2018 windiow
+    }
+
+    @Test
+    public void zipTest() {
+
+        BiFunction zipper = (a, b) -> Pair.of(a, b);
+        Maybe.just(new Dog("ljinshuan", 26)).zipWith(Maybe.just(1L), zipper);
     }
 
 }
