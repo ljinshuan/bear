@@ -4,6 +4,7 @@ import com.taobao.brand.bear.domain.Dog;
 import io.reactivex.*;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.exceptions.Exceptions;
+import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.internal.disposables.DisposableHelper;
 import io.reactivex.internal.functions.ObjectHelper;
@@ -70,6 +71,26 @@ public class FlowableliftTest {
 
             System.out.println(c);
         });
+    }
+
+    @Test
+    public void test3() {
+
+        Flowable.error(new IllegalArgumentException()).doOnError(new Consumer<Throwable>() {
+            @Override
+            public void accept(Throwable throwable) throws Exception {
+
+                System.out.println(Thread.currentThread().getName());
+            }
+        }).subscribe();
+
+        System.out.println(1);
+    }
+
+    @Test
+    public void testGroupBy() {
+
+        Flowable.rangeLong(0L, 30L).groupBy(d -> String.valueOf(d % 3)).subscribe(c -> System.out.println(c));
     }
 
 }
