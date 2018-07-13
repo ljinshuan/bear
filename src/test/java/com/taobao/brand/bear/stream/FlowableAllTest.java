@@ -3,10 +3,8 @@ package com.taobao.brand.bear.stream;
 import com.google.common.collect.Lists;
 import com.taobao.brand.bear.domain.Dog;
 import com.taobao.brand.bear.utils.ThreadUtils;
-import io.reactivex.Flowable;
-import io.reactivex.FlowableEmitter;
-import io.reactivex.FlowableOnSubscribe;
-import io.reactivex.Single;
+import io.reactivex.*;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.flowables.ConnectableFlowable;
 import io.reactivex.flowables.GroupedFlowable;
 import io.reactivex.functions.*;
@@ -228,11 +226,16 @@ public class FlowableAllTest {
     public void shareTest() {
         // TODO: 2018/7/14
 
-        Flowable<Dog> dogFlowable = Flowable.just(1, 2).flatMap(s -> Flowable.fromIterable(getDogs())).share();
+        ConnectableFlowable<Dog> dogFlowable = Flowable.just(1, 2).flatMap(s -> Flowable.fromIterable(getDogs()))
+            .publish();
 
-        dogFlowable.subscribe(logConsumer);
+        Flowable<Long> countFlow = dogFlowable.count().toFlowable();
 
-        dogFlowable.subscribe(logConsumer);
+        Flowable<String> map = dogFlowable.map(d -> d.getName());
+
+        Flowable.combineLatest(countFlow, map, (a, b) -> a + b).subscribe(logConsumer);
+
+        dogFlowable.connect();
 
         sleepForWait();
     }
@@ -378,6 +381,77 @@ public class FlowableAllTest {
         groupedFlowableFlowable.flatMap(g -> g.groupBy(n -> n.getAge() > 50)).subscribe(d -> {
 
         });
+    }
+
+    @Test
+    public void groupTest4() {
+
+        List<String> crowdIds = Lists.newArrayList("aaa", "bbb", "ccc", "dddd");
+
+        Integer integer = Flowable.fromIterable(crowdIds).skip(0).doOnNext(new Consumer<String>() {
+            @Override
+            public void accept(String s) throws Exception {
+                // TODO: 2018/7/14
+            }
+        }).flatMap(cid -> {
+
+            return Flowable.fromIterable(getDogs());
+
+        }).groupBy(d -> d.getAge() > 50).flatMap(g -> {
+
+            if (g.getKey() == true) {
+                return g.buffer(10).map(b -> b.size());
+            } else {
+                return g.buffer(10).map(b -> b.size());
+            }
+        }).doOnNext(new Consumer<Integer>() {
+            @Override
+            public void accept(Integer integer) throws Exception {
+                // TODO: 2018/7/14 完成一波计算
+            }
+        }).reduce((a, b) -> a + b).doOnSuccess(new Consumer<Integer>() {
+            @Override
+            public void accept(Integer integer) throws Exception {
+                // TODO: 2018/7/14 记录成功数
+            }
+        }).blockingGet();
+
+        System.out.println(integer);
+    }
+
+    @Test
+    public void groupTest5() {
+
+        List<String> crowdIds = Lists.newArrayList("aaa", "bbb", "ccc", "dddd");
+
+        Flowable.fromIterable(crowdIds).skip(0).doOnNext(new Consumer<String>() {
+            @Override
+            public void accept(String s) throws Exception {
+                // TODO: 2018/7/14
+            }
+        }).flatMap(cid -> {
+
+            return Flowable.fromIterable(getDogs()).groupBy(d -> d.getAge() > 50);
+
+        }).flatMap(g -> {
+
+            if (g.getKey() == true) {
+                return g.buffer(10).map(b -> b.size());
+            } else {
+                return g.buffer(10).map(b -> b.size());
+            }
+        }).doOnNext(new Consumer<Integer>() {
+            @Override
+            public void accept(Integer integer) throws Exception {
+                // TODO: 2018/7/14 完成一波计算
+            }
+        }).reduce((a, b) -> a + b).doOnSuccess(new Consumer<Integer>() {
+            @Override
+            public void accept(Integer integer) throws Exception {
+                // TODO: 2018/7/14 记录成功数
+            }
+        });
+
     }
 
     public static void sleepForWait() {
