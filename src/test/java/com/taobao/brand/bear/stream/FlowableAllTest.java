@@ -40,7 +40,7 @@ public class FlowableAllTest {
         datas.add(new Dog("channel", 100));
         datas.add(new Dog("dabulin", 24));
         datas.add(new Dog("dabulin", 28));
-        log.info("invoke getDogs");
+        log.info("invoke getDogs-我很耗时");
 
         return datas;
     }
@@ -388,35 +388,30 @@ public class FlowableAllTest {
 
         List<String> crowdIds = Lists.newArrayList("aaa", "bbb", "ccc", "dddd");
 
-        Integer integer = Flowable.fromIterable(crowdIds).skip(0).doOnNext(new Consumer<String>() {
-            @Override
-            public void accept(String s) throws Exception {
-                // TODO: 2018/7/14
-            }
-        }).flatMap(cid -> {
+        Integer integer = Flowable.fromIterable(crowdIds).skip(0).flatMap(cid -> {
 
-            return Flowable.fromIterable(getDogs());
+            return Flowable.fromIterable(getTestDatas());
 
-        }).groupBy(d -> d.getAge() > 50).flatMap(g -> {
-
+        }).groupBy(d -> d > 40).flatMap(g -> {
+            log.info("in group by : {}", g.getKey());
             if (g.getKey() == true) {
-                return g.buffer(10).map(b -> b.size());
+                return g.buffer(100).map(b -> handleBatch(true, b));
             } else {
-                return g.buffer(10).map(b -> b.size());
+                return g.buffer(100).map(b -> handleBatch(false, b));
             }
-        }).doOnNext(new Consumer<Integer>() {
-            @Override
-            public void accept(Integer integer) throws Exception {
-                // TODO: 2018/7/14 完成一波计算
-            }
-        }).reduce((a, b) -> a + b).doOnSuccess(new Consumer<Integer>() {
-            @Override
-            public void accept(Integer integer) throws Exception {
-                // TODO: 2018/7/14 记录成功数
-            }
+        }).reduce((a, b) -> {
+            log.info("reduce a:{} b:{}", a, b);
+            return a + b;
         }).blockingGet();
 
         System.out.println(integer);
+    }
+
+    private Integer handleBatch(boolean b, List<Long> b1) {
+
+        log.info("handleBatch {} size:{}", b, b1.size());
+
+        return b1.size();
     }
 
     @Test
@@ -424,33 +419,29 @@ public class FlowableAllTest {
 
         List<String> crowdIds = Lists.newArrayList("aaa", "bbb", "ccc", "dddd");
 
-        Flowable.fromIterable(crowdIds).skip(0).doOnNext(new Consumer<String>() {
-            @Override
-            public void accept(String s) throws Exception {
-                // TODO: 2018/7/14
-            }
-        }).flatMap(cid -> {
+        Flowable.fromIterable(crowdIds).skip(0).flatMap(cid -> {
 
-            return Flowable.fromIterable(getDogs()).groupBy(d -> d.getAge() > 50);
+            return Flowable.fromIterable(getTestDatas()).groupBy(d -> d > 30).flatMap(g -> {
+                log.info("in group by : {}", g.getKey());
+                if (g.getKey() == true) {
+                    return g.buffer(100).map(b -> handleBatch(true, b));
+                } else {
+                    return g.buffer(100).map(b -> handleBatch(false, b));
+                }
+            });
 
-        }).flatMap(g -> {
+        }).reduce((a, b) -> {
+            log.info("reduce a:{} b:{}", a, b);
+            return a + b;
+        }).blockingGet();
 
-            if (g.getKey() == true) {
-                return g.buffer(10).map(b -> b.size());
-            } else {
-                return g.buffer(10).map(b -> b.size());
-            }
-        }).doOnNext(new Consumer<Integer>() {
-            @Override
-            public void accept(Integer integer) throws Exception {
-                // TODO: 2018/7/14 完成一波计算
-            }
-        }).reduce((a, b) -> a + b).doOnSuccess(new Consumer<Integer>() {
-            @Override
-            public void accept(Integer integer) throws Exception {
-                // TODO: 2018/7/14 记录成功数
-            }
-        });
+    }
+
+    public List<Long> getTestDatas() {
+
+        log.info("invoke getDogs-我很耗时");
+
+        return Flowable.rangeLong(0, 100).toList().blockingGet();
 
     }
 
