@@ -233,7 +233,7 @@ public class FlowableAllTest {
 
         Flowable<String> map = dogFlowable.map(d -> d.getName());
 
-        Flowable.combineLatest(countFlow, map, (a, b) -> a + b).subscribe(logConsumer);
+        Flowable.combineLatest(countFlow.repeat(100), map, (a, b) -> a + "----" + b).subscribe(logConsumer);
 
         dogFlowable.connect();
 
