@@ -1,5 +1,6 @@
 package com.taobao.brand.bear.other;
 
+import com.taobao.brand.bear.utils.ThreadUtils;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +15,12 @@ public class LogbackTest {
     @Test
     public void test() {
         logger = LoggerFactory.getLogger(LogbackTest.class);
-        logger.info("saaaaa");
+
+        while (true) {
+            ThreadUtils.sleep(300);
+            logger.info("saaaaa" + System.currentTimeMillis());
+        }
+
+
     }
 }
