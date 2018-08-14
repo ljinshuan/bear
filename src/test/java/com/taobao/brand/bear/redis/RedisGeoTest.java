@@ -81,7 +81,7 @@ public class RedisGeoTest {
         String key = "Hangzhou";
         Jedis jedis = getJedis();
         StopWatch started = StopWatch.createStarted();
-        Flowable.rangeLong(500000, 500000).forEach(i -> {
+        Flowable.rangeLong(0, 1000000).forEach(i -> {
 
             double v = random.nextGaussian() * 10.0;
             long start = System.currentTimeMillis();
@@ -105,7 +105,7 @@ public class RedisGeoTest {
         StopWatch started = StopWatch.createStarted();
         GeoRadiusParam param = GeoRadiusParam.geoRadiusParam().withCoord().withDist();
 
-        List<GeoRadiusResponse> georadius = jedis.georadius(key, baseLong, baselati, 100, GeoUnit.KM, param);
+        List<GeoRadiusResponse> georadius = jedis.georadius(key, baseLong, baselati, 500, GeoUnit.KM, param);
         closeJedis(jedis);
 
         log.info("end  {} count:{}", started.getTime(TimeUnit.MILLISECONDS), georadius.size());
