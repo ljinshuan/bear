@@ -6,7 +6,10 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.CountOptions;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.ReplaceOptions;
+import com.mongodb.client.model.UpdateOptions;
 import com.mongodb.client.model.geojson.Point;
 import com.mongodb.client.model.geojson.Position;
 import io.reactivex.Flowable;
@@ -16,6 +19,7 @@ import org.bson.codecs.configuration.CodecRegistries;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
 import org.bson.conversions.Bson;
+import org.bson.types.ObjectId;
 import org.junit.Test;
 import redis.clients.jedis.GeoRadiusResponse;
 import redis.clients.jedis.GeoUnit;
@@ -53,6 +57,8 @@ public class MongoDBTestA {
 
         Person ada = new Person("Ada Byron", 20, new Address("St James Square", "London", "W1"));
 
+        ada.setName(null);
+
         collection.insertOne(ada);
 
         collection.find().forEach(new Block<Person>() {
@@ -63,6 +69,26 @@ public class MongoDBTestA {
             }
         });
 
+    }
+
+    @Test
+    public void testUpdateName() {
+
+        MongoDatabase database = mongoClient.getDatabase("test");
+
+        MongoCollection<Person> collection = database.getCollection("person", Person.class);
+
+        Person ada = new Person("Ada Byron", 23, new Address("St James Square", "London", "W1"));
+
+        ada.setName("jinshuan.li-repace");
+
+        Bson filter = Filters.eq("name", "jinshuan.li-repace");
+        UpdateOptions options = new UpdateOptions();
+        options.upsert(true);
+        ReplaceOptions replaceOptions = ReplaceOptions.createReplaceOptions(options);
+        collection.replaceOne(filter, ada, replaceOptions);
+
+        collection.find(filter).forEach((Block<Person>)person -> log.info("new data {}", person));
     }
 
     @Test
@@ -85,7 +111,13 @@ public class MongoDBTestA {
 
         Bson locationFilter = Filters.near("location", refPoint, 500000.0, 1000.0);
 
-        long count = collection.count(locationFilter);
+        Bson location = Filters.geoWithinCenterSphere("location", -73.9667, 40.78, 500000.0);
+
+        CountOptions countOptions = new CountOptions();
+
+        countOptions.limit(5000000);
+        //countOptions.maxTime(1, TimeUnit.MILLISECONDS);
+        long count = collection.countDocuments(location, countOptions);
 
         System.out.println(count);
 

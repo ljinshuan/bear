@@ -5,14 +5,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.StopWatch;
 import org.junit.Before;
 import org.junit.Test;
-import redis.clients.jedis.GeoRadiusResponse;
-import redis.clients.jedis.GeoUnit;
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.*;
 import redis.clients.jedis.params.geo.GeoRadiusParam;
 
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -27,6 +25,30 @@ public class RedisGeoTest {
     public void initPool() {
 
         jedisPool = new JedisPool("127.0.0.1", 6379);
+
+    }
+
+    @Test
+    public void zset() {
+
+        Jedis jedis = getJedis();
+
+        String key = "timeMessage";
+
+        jedis.zadd(key, 333, "t-3333");
+        jedis.zadd(key, 444, "t-444");
+
+        Set<String> strings = jedis.zrangeByScore(key, 0, 333, 0, 100);
+
+        Set<Tuple> tuples = jedis.zrangeByScoreWithScores(key, 0, 333);
+
+        for (Tuple tuple : tuples) {
+            String element = tuple.getElement();
+            System.out.println(element);
+        }
+
+
+        System.out.println(strings);
 
     }
 
