@@ -45,6 +45,7 @@ public class RedisGeoTest {
         for (Tuple tuple : tuples) {
             String element = tuple.getElement();
             System.out.println(element);
+
         }
 
 

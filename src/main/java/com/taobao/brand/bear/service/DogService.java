@@ -2,6 +2,8 @@ package com.taobao.brand.bear.service;
 
 import com.google.common.collect.Lists;
 import com.taobao.brand.bear.domain.Dog;
+import com.taobao.brand.bear.domain.TQLFacade;
+import com.taobao.brand.bear.feature.FeatureAwareBeans;
 import com.taobao.brand.bear.properties.UserProperties;
 import com.taobao.brand.bear.utils.ThreadUtils;
 import lombok.extern.slf4j.Slf4j;
