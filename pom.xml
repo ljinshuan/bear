@@ -6,10 +6,10 @@
     <groupId>com.taobao.brand</groupId>
     <artifactId>bear</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <modules>
+   <!-- <modules>
         <module>log4jtest</module>
-    </modules>
-    <packaging>pom</packaging>
+    </modules>-->
+    <packaging>jar</packaging>
 
     <name>bear</name>
     <description>Demo project for Spring Boot</description>
@@ -225,6 +225,12 @@
             <groupId>org.quartz-scheduler</groupId>
             <artifactId>quartz-jobs</artifactId>
             <version>2.3.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>2.4</version>
         </dependency>
 
     </dependencies>

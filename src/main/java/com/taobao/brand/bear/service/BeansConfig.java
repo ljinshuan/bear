@@ -5,9 +5,7 @@ import com.google.common.collect.Maps;
 import com.taobao.brand.bear.job.ExampleJob;
 import com.taobao.brand.bear.utils.ThreadUtils;
 import org.apache.commons.lang3.time.DateUtils;
-import org.quartz.JobDataMap;
-import org.quartz.JobDetail;
-import org.quartz.SchedulerException;
+import org.quartz.*;
 import org.quartz.impl.JobDetailImpl;
 import org.quartz.impl.triggers.SimpleTriggerImpl;
 import org.springframework.context.ApplicationContext;
@@ -51,7 +49,7 @@ public class BeansConfig {
         simpleTrigger.setJobDataMap(new JobDataMap(data));
         simpleTrigger.setTimesTriggered(1);
 
-        JobDetailImpl jobDetail = new JobDetailImpl("jobName2", ExampleJob.class);
+        JobDetailImpl jobDetail = new JobDetailImpl("jobName2", TestClass.class);
 
         schedulerFactoryBean().getScheduler().scheduleJob(jobDetail, simpleTrigger);
 
@@ -64,5 +62,28 @@ public class BeansConfig {
                 return 1L;
             }
         });
+    }
+
+
+    public static class TestClass implements Job{
+
+        /**
+         * <p> Called by the <code>{@link Scheduler}</code> when a <code>{@link Trigger}</code> fires that is associated
+         * with the <code>Job</code>. </p>
+         * <p>
+         * <p> The implementation may wish to set a {@link JobExecutionContext#setResult(Object) result} object on the
+         * {@link JobExecutionContext} before this method exits.  The result itself is meaningless to Quartz, but may be
+         * informative to <code>{@link JobListener}s</code> or <code>{@link TriggerListener}s</code> that are
+         * watching the
+         * job's execution. </p>
+         *
+         * @param context
+         * @throws JobExecutionException if there is an exception while executing the job.
+         */
+        @Override
+        public void execute(JobExecutionContext context) throws JobExecutionException {
+
+            System.out.println(context);
+        }
     }
 }
