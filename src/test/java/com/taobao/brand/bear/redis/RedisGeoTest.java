@@ -5,14 +5,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.StopWatch;
 import org.junit.Before;
 import org.junit.Test;
-import redis.clients.jedis.GeoRadiusResponse;
-import redis.clients.jedis.GeoUnit;
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.*;
 import redis.clients.jedis.params.geo.GeoRadiusParam;
 
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -27,6 +25,31 @@ public class RedisGeoTest {
     public void initPool() {
 
         jedisPool = new JedisPool("127.0.0.1", 6379);
+
+    }
+
+    @Test
+    public void zset() {
+
+        Jedis jedis = getJedis();
+
+        String key = "timeMessage";
+
+        jedis.zadd(key, 333, "t-3333");
+        jedis.zadd(key, 444, "t-444");
+
+        Set<String> strings = jedis.zrangeByScore(key, 0, 333, 0, 100);
+
+        Set<Tuple> tuples = jedis.zrangeByScoreWithScores(key, 0, 333);
+
+        for (Tuple tuple : tuples) {
+            String element = tuple.getElement();
+            System.out.println(element);
+
+        }
+
+
+        System.out.println(strings);
 
     }
 
@@ -81,7 +104,7 @@ public class RedisGeoTest {
         String key = "Hangzhou";
         Jedis jedis = getJedis();
         StopWatch started = StopWatch.createStarted();
-        Flowable.rangeLong(500000, 500000).forEach(i -> {
+        Flowable.rangeLong(0, 1000000).forEach(i -> {
 
             double v = random.nextGaussian() * 10.0;
             long start = System.currentTimeMillis();
@@ -105,7 +128,7 @@ public class RedisGeoTest {
         StopWatch started = StopWatch.createStarted();
         GeoRadiusParam param = GeoRadiusParam.geoRadiusParam().withCoord().withDist();
 
-        List<GeoRadiusResponse> georadius = jedis.georadius(key, baseLong, baselati, 100, GeoUnit.KM, param);
+        List<GeoRadiusResponse> georadius = jedis.georadius(key, baseLong, baselati, 500, GeoUnit.KM, param);
         closeJedis(jedis);
 
         log.info("end  {} count:{}", started.getTime(TimeUnit.MILLISECONDS), georadius.size());
