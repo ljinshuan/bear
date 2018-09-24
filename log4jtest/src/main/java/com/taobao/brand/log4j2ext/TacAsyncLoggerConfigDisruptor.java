@@ -120,7 +120,7 @@ public class TacAsyncLoggerConfigDisruptor extends AsyncLoggerConfigDisruptor {
         @Override
         public Log4jEventWrapper newInstance() {
             //  这里需要返回一个 TacLogEvent
-            return new Log4jEventWrapper(new TacLogEvent());
+            return new Log4jEventWrapper(new TacMutableLogEvent());
         }
     };
 
@@ -393,7 +393,7 @@ public class TacAsyncLoggerConfigDisruptor extends AsyncLoggerConfigDisruptor {
 
     private LogEvent wrapTacLogEvent(LogEvent logEvent) {
         if (logEvent instanceof MutableLogEvent) {
-            TacLogEvent tacLogEvent = new TacLogEvent();
+            TacMutableLogEvent tacLogEvent = new TacMutableLogEvent();
             tacLogEvent.initFrom(logEvent);
             return tacLogEvent;
         }

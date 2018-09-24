@@ -9,6 +9,7 @@ import org.apache.logging.log4j.core.async.AsyncQueueFullMessageUtil;
 import org.apache.logging.log4j.core.async.EventRoute;
 import org.apache.logging.log4j.core.config.*;
 import org.apache.logging.log4j.core.config.plugins.*;
+import org.apache.logging.log4j.core.impl.DefaultLogEventFactory;
 import org.apache.logging.log4j.core.impl.Log4jLogEvent;
 import org.apache.logging.log4j.core.util.Booleans;
 import org.apache.logging.log4j.message.Message;
@@ -36,7 +37,9 @@ public class TacAsyncLoggerConfig extends AsyncLoggerConfig {
         super(name, appenders, filter, level, additive, properties, config, includeLocation);
         this.configuration = config;
 
-        tacDelegate.setLogEventFactory(getLogEventFactory());
+       tacDelegate.setLogEventFactory(getLogEventFactory());
+
+       // tacDelegate.setLogEventFactory( DefaultLogEventFactory.getInstance());
 
     }
 

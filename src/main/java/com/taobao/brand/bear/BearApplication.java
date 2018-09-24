@@ -9,6 +9,9 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.*;
 import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Slf4j
 @SpringBootApplication(scanBasePackages = {"com.taobao.brand"})
@@ -19,11 +22,17 @@ public class BearApplication {
 
     public static void main(String[] args) {
 
-        Logger logger= LoggerFactory.getLogger("xx");
-        String name = Thread.currentThread().getName();
-
-        log.info("hello " + name);
         ConfigurableApplicationContext applicationContext = SpringApplication.run(BearApplication.class, args);
 
+    }
+
+    @Bean(name = "redisCountTemplate")
+    public RedisTemplate redisCountTemplate(
+        JedisConnectionFactory jedisConnectionFactory) {
+
+        RedisTemplate redisTemplate = new RedisTemplate();
+        redisTemplate.setConnectionFactory(jedisConnectionFactory);
+        redisTemplate.setDefaultSerializer(new StringRedisSerializer());
+        return redisTemplate;
     }
 }

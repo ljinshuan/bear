@@ -1,34 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="DEBUG" packages="com.taobao.brand.log4j2ext">
+
+
+
+
     <Properties>
         <property name="LOG_FILE">$${env:HOME}/logs/bear_log4j.log</property>
-        <property name="pattern">%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %L %msg%n</property>
+        <property name="pattern">%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %L %msg %X{traceId} %n</property>
     </Properties>
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT">
             <PatternLayout pattern="${pattern}"/>
         </Console>
-        <!--
-                <File name="AppFile" fileName="${LOG_FILE}">
-                    <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
-                </File>
-                <Async name="Async">
-                    <AppenderRef ref="AppFile"/>
-                </Async>
-        -->
 
-
-        <TacRollingRandomAccessFile name="TacRollingRandomAccessFile" fileName="${LOG_FILE}"
-                                    filePattern="${LOG_FILE}.%d{yyyy-MM-dd}">
-            <PatternLayout pattern="${pattern}"/>
-            <Policies>
-                <TimeBasedTriggeringPolicy/>
-            </Policies>
-        </TacRollingRandomAccessFile>
 
         <TacThreadLocalAppender name="TacThreadLocalAppender">
             <PatternLayout pattern="${pattern}"/>
         </TacThreadLocalAppender>
+
+
+        <TacRollingFile name="APPLICATION" fileName="${LOG_FILE}" filePattern="${LOG_FILE}.%d{yyyy-MM-dd}">
+            <PatternLayout pattern="${pattern}"/>
+            <TimeBasedTriggeringPolicy/>
+        </TacRollingFile>
     </Appenders>
 
 
@@ -38,15 +32,25 @@
             <AppenderRef ref="Console"/>
         </Root>
 
+
         <!--AsyncLogger-->
         <!--TacAsyncLogger-->
-        <TacAsyncLogger name="com.taobao.brand" level="info" additivity="true" includeLocation="true">
+      <!--  <TacAsyncLogger name="com.taobao.brand" level="info" additivity="true" includeLocation="true">
             <AppenderRef ref="Console"/>
             <AppenderRef ref="TacRollingRandomAccessFile"/>
+        </TacAsyncLogger>-->
+
+        <TacAsyncLogger name="com.taobao" level="info" additivity="true" includeLocation="false">
+            <TraceFilter/>
+            <AppenderRef ref="APPLICATION"/>
         </TacAsyncLogger>
 
-        <Logger name="com.taobao" level="info" additivity="false" includeLocation="true">
+        <Logger name="com" level="info" additivity="false" includeLocation="false">
+            <TraceFilter/>
             <AppenderRef ref="TacThreadLocalAppender"/>
         </Logger>
+
+
+
     </Loggers>
 </Configuration>
