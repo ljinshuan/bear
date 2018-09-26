@@ -72,4 +72,13 @@ public class DogService implements BeanNameAware {
         return this.allDogs;
     }
 
+    public void showDog(String name,Dog dog) {
+        System.out.println(dog);
+    }
+
+    public void showDog2(String name,Long age,Dog dog) {
+        System.out.println(dog);
+    }
+
+
 }

@@ -37,6 +37,7 @@ public class App {
 
         disruptor.publishEvent(TRANSLATOR, "ljinshuan");
 
+        ThreadUtils.sleep(10000);
         disruptor.shutdown(1L, TimeUnit.SECONDS);
     }
 }

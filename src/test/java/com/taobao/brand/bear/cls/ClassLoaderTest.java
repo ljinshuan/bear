@@ -29,4 +29,21 @@ public class ClassLoaderTest {
 
         System.out.println(execute);
     }
+
+    @Test
+    public void test2() {
+
+        try {
+            TestObj testObj = new TestObj();
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+
+        try {
+            TestObj testObj = new TestObj();
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+
+    }
 }

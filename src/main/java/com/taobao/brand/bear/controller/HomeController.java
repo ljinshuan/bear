@@ -15,9 +15,10 @@ import javax.annotation.Resource;
 @Slf4j
 public class HomeController {
 
-    public HomeController(){
+    public HomeController() {
         log.info("home");
     }
+
     @Resource
     private HelloService helloServie;
 
@@ -42,6 +43,8 @@ public class HomeController {
     public Dog newDog2() {
 
         Dog dog = dogService.createDog("ljinshuan", 1111);
+
+        dogService.showDog("jinshuan",dog);
 
         return dog;
     }
