@@ -1,29 +1,21 @@
 package com.taobao.brand.log4j2ext;
 
 import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.ThreadContext;
 import org.apache.logging.log4j.core.Filter;
-import org.apache.logging.log4j.core.LogEvent;
-import org.apache.logging.log4j.core.Logger;
 import org.apache.logging.log4j.core.config.ConfigurationException;
 import org.apache.logging.log4j.core.config.Node;
 import org.apache.logging.log4j.core.config.plugins.Plugin;
-import org.apache.logging.log4j.core.config.plugins.PluginBuilderAttribute;
 import org.apache.logging.log4j.core.config.plugins.PluginBuilderFactory;
-import org.apache.logging.log4j.core.filter.AbstractFilter;
-import org.apache.logging.log4j.core.filter.BurstFilter;
-import org.apache.logging.log4j.message.Message;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Random;
 
 /**
- * @author jinshuan.li 2018/9/23 16:40
+ * @author jinshuan.li 2018/9/24 12:23
  */
+@Plugin(name = "RateFilter", category = Node.CATEGORY, elementType = Filter.ELEMENT_TYPE, printObject = true)
+public class RateFilter extends FilterAawre {
 
-@Plugin(name = "TraceFilter", category = Node.CATEGORY, elementType = Filter.ELEMENT_TYPE, printObject = true)
-public class TraceFilter extends FilterAawre {
+    private Random random = new Random(System.currentTimeMillis());
 
     @PluginBuilderFactory
     public static Builder newBuilder() {
@@ -40,11 +32,26 @@ public class TraceFilter extends FilterAawre {
     @Override
     protected Result filter(Level level) {
 
-        return Result.NEUTRAL;
+        Boolean skip = true;
+
+        if (level.equals(Level.INFO)) {
+            int i = random.nextInt(100);
+            if (i < 20) {
+                skip = false;
+            }
+
+        }
+        // 错误日志不跳过
+        if (level.equals(Level.ERROR)) {
+            skip = false;
+        }
+
+        return skip == true ? Result.DENY : Result.NEUTRAL;
+
     }
 
-    public static class Builder extends AbstractFilterBuilder<Builder>
-        implements org.apache.logging.log4j.core.util.Builder<TraceFilter> {
+    public static class Builder extends AbstractFilterBuilder<RateFilter.Builder>
+        implements org.apache.logging.log4j.core.util.Builder<RateFilter> {
 
         /**
          * Builds the object after all configuration has been set. This will use default values for any unspecified
@@ -54,9 +61,8 @@ public class TraceFilter extends FilterAawre {
          * @throws ConfigurationException if there was an error building the object.
          */
         @Override
-        public TraceFilter build() {
-            return new TraceFilter();
+        public RateFilter build() {
+            return new RateFilter();
         }
     }
-
 }

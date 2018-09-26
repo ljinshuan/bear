@@ -53,8 +53,8 @@ final class DisruptorUtil {
 
     static WaitStrategy createWaitStrategy(final String propertyName) {
         final String key = propertyName.startsWith("AsyncLogger.")
-            ? "AsyncLogger.Timeout"
-            : "AsyncLoggerConfig.Timeout";
+                ? "AsyncLogger.Timeout"
+                : "AsyncLoggerConfig.Timeout";
         final long timeoutMillis = DisruptorUtil.getTimeout(key, 10L);
         return createWaitStrategy(propertyName, timeoutMillis);
     }
@@ -62,34 +62,33 @@ final class DisruptorUtil {
     static WaitStrategy createWaitStrategy(final String propertyName, final long timeoutMillis) {
         final String strategy = PropertiesUtil.getProperties().getStringProperty(propertyName, "TIMEOUT");
         LOGGER.trace("property {}={}", propertyName, strategy);
-        final String strategyUp = strategy.toUpperCase(
-            Locale.ROOT); // TODO Refactor into Strings.toRootUpperCase(String)
+        final String strategyUp = strategy.toUpperCase(Locale.ROOT); // TODO Refactor into Strings.toRootUpperCase(String)
         switch (strategyUp) { // TODO Define a DisruptorWaitStrategy enum?
-            case "SLEEP":
-                return new SleepingWaitStrategy();
-            case "YIELD":
-                return new YieldingWaitStrategy();
-            case "BLOCK":
-                return new BlockingWaitStrategy();
-            case "BUSYSPIN":
-                return new BusySpinWaitStrategy();
-            case "TIMEOUT":
-                return new TimeoutBlockingWaitStrategy(timeoutMillis, TimeUnit.MILLISECONDS);
-            default:
-                return new TimeoutBlockingWaitStrategy(timeoutMillis, TimeUnit.MILLISECONDS);
+        case "SLEEP":
+            return new SleepingWaitStrategy();
+        case "YIELD":
+            return new YieldingWaitStrategy();
+        case "BLOCK":
+            return new BlockingWaitStrategy();
+        case "BUSYSPIN":
+            return new BusySpinWaitStrategy();
+        case "TIMEOUT":
+            return new TimeoutBlockingWaitStrategy(timeoutMillis, TimeUnit.MILLISECONDS);
+        default:
+            return new TimeoutBlockingWaitStrategy(timeoutMillis, TimeUnit.MILLISECONDS);
         }
     }
 
     static int calculateRingBufferSize(final String propertyName) {
         int ringBufferSize = Constants.ENABLE_THREADLOCALS ? RINGBUFFER_NO_GC_DEFAULT_SIZE : RINGBUFFER_DEFAULT_SIZE;
         final String userPreferredRBSize = PropertiesUtil.getProperties().getStringProperty(propertyName,
-            String.valueOf(ringBufferSize));
+                String.valueOf(ringBufferSize));
         try {
             int size = Integer.parseInt(userPreferredRBSize);
             if (size < RINGBUFFER_MIN_SIZE) {
                 size = RINGBUFFER_MIN_SIZE;
                 LOGGER.warn("Invalid RingBufferSize {}, using minimum size {}.", userPreferredRBSize,
-                    RINGBUFFER_MIN_SIZE);
+                        RINGBUFFER_MIN_SIZE);
             }
             ringBufferSize = size;
         } catch (final Exception ex) {
@@ -106,7 +105,7 @@ final class DisruptorUtil {
         try {
             @SuppressWarnings("unchecked")
             final Class<? extends ExceptionHandler<RingBufferLogEvent>> klass =
-                (Class<? extends ExceptionHandler<RingBufferLogEvent>>)LoaderUtil.loadClass(cls);
+                (Class<? extends ExceptionHandler<RingBufferLogEvent>>) LoaderUtil.loadClass(cls);
             return klass.newInstance();
         } catch (final Exception ignored) {
             LOGGER.debug("Invalid AsyncLogger.ExceptionHandler value: error creating {}: ", cls, ignored);
@@ -122,8 +121,7 @@ final class DisruptorUtil {
         try {
             @SuppressWarnings("unchecked")
             final Class<? extends ExceptionHandler<AsyncLoggerConfigDisruptor.Log4jEventWrapper>> klass =
-                (Class<? extends ExceptionHandler<AsyncLoggerConfigDisruptor.Log4jEventWrapper>>)LoaderUtil.loadClass(
-                    cls);
+                    (Class<? extends ExceptionHandler<AsyncLoggerConfigDisruptor.Log4jEventWrapper>>) LoaderUtil.loadClass(cls);
             return klass.newInstance();
         } catch (final Exception ignored) {
             LOGGER.debug("Invalid AsyncLoggerConfig.ExceptionHandler value: error creating {}: ", cls, ignored);
@@ -149,7 +147,7 @@ final class DisruptorUtil {
             return result.get();
         } catch (final Exception ex) {
             final String msg = "Could not obtain executor thread Id. "
-                + "Giving up to avoid the risk of application deadlock.";
+                    + "Giving up to avoid the risk of application deadlock.";
             throw new IllegalStateException(msg, ex);
         }
     }

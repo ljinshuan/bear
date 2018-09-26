@@ -2,8 +2,6 @@
 <Configuration status="DEBUG" packages="com.taobao.brand.log4j2ext">
 
 
-
-
     <Properties>
         <property name="LOG_FILE">$${env:HOME}/logs/bear_log4j.log</property>
         <property name="pattern">%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %L %msg %X{traceId} %n</property>
@@ -35,21 +33,16 @@
 
         <!--AsyncLogger-->
         <!--TacAsyncLogger-->
-      <!--  <TacAsyncLogger name="com.taobao.brand" level="info" additivity="true" includeLocation="true">
-            <AppenderRef ref="Console"/>
-            <AppenderRef ref="TacRollingRandomAccessFile"/>
-        </TacAsyncLogger>-->
+        <!--  <TacAsyncLogger name="com.taobao.brand" level="info" additivity="true" includeLocation="true">
+              <AppenderRef ref="Console"/>
+              <AppenderRef ref="TacRollingRandomAccessFile"/>
+          </TacAsyncLogger>-->
 
-        <TacAsyncLogger name="com.taobao" level="info" additivity="true" includeLocation="false">
+        <TacAsyncLogger name="com.taobao" level="info" additivity="false" includeLocation="false">
             <TraceFilter/>
             <AppenderRef ref="APPLICATION"/>
+
         </TacAsyncLogger>
-
-        <Logger name="com" level="info" additivity="false" includeLocation="false">
-            <TraceFilter/>
-            <AppenderRef ref="TacThreadLocalAppender"/>
-        </Logger>
-
 
 
     </Loggers>

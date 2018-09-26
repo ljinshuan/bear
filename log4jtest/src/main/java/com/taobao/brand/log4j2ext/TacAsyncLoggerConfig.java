@@ -9,51 +9,66 @@ import org.apache.logging.log4j.core.async.AsyncQueueFullMessageUtil;
 import org.apache.logging.log4j.core.async.EventRoute;
 import org.apache.logging.log4j.core.config.*;
 import org.apache.logging.log4j.core.config.plugins.*;
-import org.apache.logging.log4j.core.impl.DefaultLogEventFactory;
 import org.apache.logging.log4j.core.impl.Log4jLogEvent;
 import org.apache.logging.log4j.core.util.Booleans;
 import org.apache.logging.log4j.message.Message;
 import org.apache.logging.log4j.spi.AbstractLogger;
 import org.apache.logging.log4j.util.Strings;
 
+import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
 
 /**
- * @author jinshuan.li 2018/7/5 14:36
+ * @author jinshuan.li 2018/9/26 15:41
  */
+
 @Plugin(name = "TacAsyncLogger", category = Node.CATEGORY, printObject = true)
 public class TacAsyncLoggerConfig extends AsyncLoggerConfig {
 
-    private final AsyncLoggerConfigDelegate tacDelegate = new TacAsyncLoggerConfigDisruptor();
+    private TacAsyncLoggerConfigDisruptor tacDelegate;
 
-    private Configuration configuration;
+    private AppenderControlArraySet parentAppenders;
 
     protected TacAsyncLoggerConfig(String name, List<AppenderRef> appenders,
                                    Filter filter, Level level,
                                    boolean additive, Property[] properties,
                                    Configuration config, boolean includeLocation) {
-
         super(name, appenders, filter, level, additive, properties, config, includeLocation);
-        this.configuration = config;
 
-       tacDelegate.setLogEventFactory(getLogEventFactory());
+        tacDelegate = new TacAsyncLoggerConfigDisruptor();
 
-       // tacDelegate.setLogEventFactory( DefaultLogEventFactory.getInstance());
+        tacDelegate.setLogEventFactory(getLogEventFactory());
 
     }
 
     @Override
     public void start() {
+
         super.start();
 
-        // 这里要启动
-        TacAsyncLoggerConfigDisruptor tacDelegate = (TacAsyncLoggerConfigDisruptor)this.tacDelegate;
-
         tacDelegate.start();
+    }
+
+    /**
+     * Called by AsyncLoggerConfigHelper.RingBufferLog4jEventHandler.
+     */
+    public void asyncCallAppenders(final LogEvent event) {
+
+        if (parentAppenders == null) {
+            parentAppenders = getParentAppenders();
+        }
+        final AppenderControl[] controls = parentAppenders.get();
+        //noinspection ForLoopReplaceableByForEach
+        for (int i = 0; i < controls.length; i++) {
+            controls[i].callAppender(event);
+        }
 
     }
 
+    /**
+     * Passes on the event to a separate thread that will call {@link #asyncCallAppenders(LogEvent)}.
+     */
     @Override
     protected void callAppenders(final LogEvent event) {
 
@@ -62,7 +77,6 @@ public class TacAsyncLoggerConfig extends AsyncLoggerConfig {
         if (!tacDelegate.tryEnqueue(event, this)) {
             handleQueueFull(event);
         }
-
     }
 
     private void populateLazilyInitializedFields(final LogEvent event) {
@@ -70,11 +84,19 @@ public class TacAsyncLoggerConfig extends AsyncLoggerConfig {
         event.getThreadName();
     }
 
+    void callAppendersInCurrentThread(final LogEvent event) {
+        super.callAppenders(event);
+    }
+
+    void callAppendersInBackgroundThread(final LogEvent event) {
+        tacDelegate.enqueueEvent(event, this);
+    }
+
     private void handleQueueFull(final LogEvent event) {
         if (AbstractLogger.getRecursionDepth() > 1) { // LOG4J2-1518, LOG4J2-2031
             // If queue is full AND we are in a recursive call, call appender directly to prevent deadlock
             final Message message = AsyncQueueFullMessageUtil.transform(event.getMessage());
-            this.callAppenders(new Log4jLogEvent.Builder(event).setMessage(message).build());
+            callAppendersInCurrentThread(new Log4jLogEvent.Builder(event).setMessage(message).build());
         } else {
             // otherwise, we leave it to the user preference
             final EventRoute eventRoute = tacDelegate.getEventRoute(event.getLevel());
@@ -82,6 +104,19 @@ public class TacAsyncLoggerConfig extends AsyncLoggerConfig {
         }
     }
 
+    /**
+     * Factory method to create a LoggerConfig.
+     *
+     * @param additivity      True if additive, false otherwise.
+     * @param levelName       The Level to be associated with the Logger.
+     * @param loggerName      The name of the Logger.
+     * @param includeLocation "true" if location should be passed downstream
+     * @param refs            An array of Appender names.
+     * @param properties      Properties to pass to the Logger.
+     * @param config          The Configuration.
+     * @param filter          A Filter.
+     * @return A new LoggerConfig.
+     */
     @PluginFactory
     public static LoggerConfig createLogger(
         @PluginAttribute("additivity") final String additivity,
@@ -91,8 +126,7 @@ public class TacAsyncLoggerConfig extends AsyncLoggerConfig {
         @PluginElement("AppenderRef") final AppenderRef[] refs,
         @PluginElement("Properties") final Property[] properties,
         @PluginConfiguration final Configuration config,
-        @PluginElement("Filter") final Filter filter
-    ) {
+        @PluginElement("Filter") final Filter filter) {
         if (loggerName == null) {
             LOGGER.error("Loggers cannot be configured without a name");
             return null;
@@ -115,4 +149,19 @@ public class TacAsyncLoggerConfig extends AsyncLoggerConfig {
             additive, properties, config, includeLocation(includeLocation));
     }
 
+    public AppenderControlArraySet getParentAppenders() {
+
+        try {
+            Field appenders = LoggerConfig.class.getDeclaredField("appenders");
+            appenders.setAccessible(true);
+
+            AppenderControlArraySet o = (AppenderControlArraySet)appenders.get(this);
+
+            return o;
+        } catch (Exception e) {
+
+            System.out.println("xx");
+        }
+        return null;
+    }
 }

@@ -22,7 +22,7 @@ public class Log4j2Test {
 
             logger.info("hahaa {}", System.currentTimeMillis());
 
-            Thread.sleep(500L);
+            Thread.sleep(50);
         }
 
     }

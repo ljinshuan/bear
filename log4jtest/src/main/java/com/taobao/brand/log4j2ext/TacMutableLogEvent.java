@@ -7,7 +7,11 @@ import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.impl.MutableLogEvent;
 import org.apache.logging.log4j.core.impl.ThrowableProxy;
 import org.apache.logging.log4j.core.time.Instant;
+import org.apache.logging.log4j.core.time.MutableInstant;
+import org.apache.logging.log4j.core.util.Clock;
+import org.apache.logging.log4j.core.util.NanoClock;
 import org.apache.logging.log4j.message.Message;
+import org.apache.logging.log4j.message.TimestampMessage;
 import org.apache.logging.log4j.util.ReadOnlyStringMap;
 
 import java.util.Map;
@@ -19,15 +23,9 @@ public class TacMutableLogEvent extends MutableLogEvent implements TacLogEvent {
 
     private String msCode;
 
-    private Boolean syncHandled = false;
 
-    public Boolean getSyncHandled() {
-        return syncHandled;
-    }
+    transient boolean reserved = false;
 
-    public void setSyncHandled(Boolean syncHandled) {
-        this.syncHandled = syncHandled;
-    }
 
     @Override
     public void initFrom(LogEvent event) {
@@ -44,5 +42,17 @@ public class TacMutableLogEvent extends MutableLogEvent implements TacLogEvent {
     @Override
     public String getMsCode() {
         return this.msCode;
+    }
+
+    void initTime(final Clock clock, final NanoClock nanoClock) {
+        Message message = this.getMessage();
+        MutableInstant instant = (MutableInstant)this.getInstant();
+        if (message instanceof TimestampMessage) {
+            instant.initFromEpochMilli(((TimestampMessage)message).getTimestamp(), 0);
+        } else {
+            instant.initFrom(clock);
+        }
+        long nanoTime = nanoClock.nanoTime();
+        setNanoTime(nanoTime);
     }
 }
