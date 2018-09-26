@@ -38,11 +38,11 @@
               <AppenderRef ref="TacRollingRandomAccessFile"/>
           </TacAsyncLogger>-->
 
-        <TacAsyncLogger name="com.taobao" level="info" additivity="false" includeLocation="false">
+        <AsyncLogger name="com.taobao" level="info" additivity="false" includeLocation="false">
             <TraceFilter/>
             <AppenderRef ref="APPLICATION"/>
 
-        </TacAsyncLogger>
+        </AsyncLogger>
 
 
     </Loggers>

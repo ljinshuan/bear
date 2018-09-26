@@ -58,12 +58,12 @@
 
     <logger name="com.taobao.brand.bear" level="DEBUG" additivity="false">
         <!-- <appender-ref ref="tac-user-appender-async"/>-->
-        <appender-ref ref="APPLICATION"/>
+      <!--  <appender-ref ref="APPLICATION"/>-->
         <appender-ref ref="CONSOLE"/>
     </logger>
     <root level="INFO">
-        <appender-ref ref="APPLICATION"/>
-        <appender-ref ref="ERROR"/>
+       <!-- <appender-ref ref="APPLICATION"/>
+        <appender-ref ref="ERROR"/>-->
         <appender-ref ref="CONSOLE"/>
     </root>
 

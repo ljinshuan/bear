@@ -4,6 +4,7 @@ import com.lmax.disruptor.EventTranslatorOneArg;
 import com.lmax.disruptor.TimeoutException;
 import com.lmax.disruptor.dsl.Disruptor;
 import com.taobao.brand.bear.utils.ThreadUtils;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -12,6 +13,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author jinshuan.li 2018/8/5 11:09
  */
+@Slf4j
 public class App {
 
     private static final EventTranslatorOneArg<HelloEvent, String> TRANSLATOR =
@@ -27,7 +29,7 @@ public class App {
 
         HelloEventFactory factory = new HelloEventFactory();
 
-        int bufferSize = 1024;
+        int bufferSize = 8;
 
         Disruptor<HelloEvent> disruptor = new Disruptor<>(factory, bufferSize, executor);
 
@@ -35,9 +37,15 @@ public class App {
 
         disruptor.start();
 
-        disruptor.publishEvent(TRANSLATOR, "ljinshuan");
+        while (true) {
+            boolean success = disruptor.getRingBuffer().tryPublishEvent(TRANSLATOR, "ljinshuan" + System.currentTimeMillis());
 
-        ThreadUtils.sleep(10000);
-        disruptor.shutdown(1L, TimeUnit.SECONDS);
+            if (!success){
+                 log.error("publish error");
+            }
+            ThreadUtils.sleep(20);
+        }
+
+        // disruptor.shutdown(1L, TimeUnit.SECONDS);
     }
 }
