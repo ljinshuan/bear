@@ -8,6 +8,7 @@ import org.junit.Test;
 import redis.clients.jedis.*;
 import redis.clients.jedis.params.geo.GeoRadiusParam;
 
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -47,7 +48,6 @@ public class RedisGeoTest {
             System.out.println(element);
 
         }
-
 
         System.out.println(strings);
 
@@ -132,6 +132,26 @@ public class RedisGeoTest {
         closeJedis(jedis);
 
         log.info("end  {} count:{}", started.getTime(TimeUnit.MILLISECONDS), georadius.size());
+    }
+
+    @Test
+    public void testLog() {
+
+        Jedis jedis = getJedis();
+
+        String key = "zddLjin";
+
+        jedis.zadd(key, 1, "111");
+        jedis.zadd(key, 2, "1112");
+
+        Set<String> zrange = jedis.zrange(key, 0, 100);
+
+        Set<String> sets=new LinkedHashSet<>();
+
+        sets.add("111");
+        sets.add("1112");
+
+        System.out.println("xxx");
     }
 
 }

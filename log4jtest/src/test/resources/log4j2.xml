@@ -21,6 +21,17 @@
             <PatternLayout pattern="${pattern}"/>
             <TimeBasedTriggeringPolicy/>
         </TacRollingFile>
+
+
+        <RollingFile name="RollingTestAppender" fileName="${LOG_FILE}"
+                     filePattern="${LOG_FILE}.%i.%d{yyyy-MM-dd}">
+            <PatternLayout pattern="${pattern}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="1 KB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="5"/>
+        </RollingFile>
     </Appenders>
 
 
@@ -42,6 +53,11 @@
             <TraceFilter/>
             <AppenderRef ref="APPLICATION"/>
 
+        </AsyncLogger>
+
+
+        <AsyncLogger name="RollingTest" level="info" additivity="false" includeLocation="false">
+            <AppenderRef ref="RollingTestAppender"/>
         </AsyncLogger>
 
 

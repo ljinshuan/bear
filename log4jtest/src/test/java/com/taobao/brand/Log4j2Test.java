@@ -1,5 +1,6 @@
 package com.taobao.brand;
 
+import com.google.common.hash.Hashing;
 import com.taobao.brand.log4j2ext.ThreadLocals;
 import org.apache.logging.log4j.ThreadContext;
 import org.junit.Test;
@@ -11,7 +12,7 @@ import org.slf4j.LoggerFactory;
  */
 public class Log4j2Test {
 
-    private static final Logger logger = LoggerFactory.getLogger(Log4j2Test.class);
+    private static final Logger logger = LoggerFactory.getLogger("RollingTest");
 
     @Test
     public void test() throws InterruptedException {
@@ -20,7 +21,8 @@ public class Log4j2Test {
 
         while (true) {
 
-            logger.info("hahaa {}", System.currentTimeMillis());
+            logger.info("hahaa  {} {}", System.currentTimeMillis(),
+                Hashing.sha256().hashLong(System.currentTimeMillis()));
 
             Thread.sleep(50);
         }

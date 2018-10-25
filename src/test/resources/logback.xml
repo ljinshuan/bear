@@ -55,7 +55,7 @@
             <fileNamePattern>${LOG_PATH}/bear_rolling.log.%d{yyyy-MM-dd-mm}.%i</fileNamePattern>
             <maxFileSize>10MB</maxFileSize>
             <maxHistory>10</maxHistory>
-            <totalSizeCap>1024MB</totalSizeCap>
+            <totalSizeCap>100MB</totalSizeCap>
         </rollingPolicy>
     </appender>
 
@@ -74,7 +74,7 @@
     <logger name="com.taobao.brand.bear" level="DEBUG" additivity="false">
         <!-- <appender-ref ref="tac-user-appender-async"/>-->
         <!--  <appender-ref ref="APPLICATION"/>-->
-        <appender-ref ref="CONSOLE"/>
+
         <appender-ref ref="rollingTestAppender"/>
     </logger>
     <root level="INFO">
